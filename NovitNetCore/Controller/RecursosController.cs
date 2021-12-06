@@ -45,18 +45,22 @@ namespace NovitNetCore.Controller
         }
 
         [HttpGet]
-        public ActionResult<List<RecursosViewModel>> Get()
+        public ActionResult<List<RecursosViewModel>> Get([FromHeader] string token)
         {
+            if (ValidarToken(token))
             return Ok(contexto.Recurso);
+            else
+                return Unauthorized();
         }
 
         [HttpGet("{id}")]
 
 
-        public ActionResult<RecursosViewModel> Get(int id)
+        public ActionResult<RecursosViewModel> Get([FromHeader] string token, int id)
         {
+            if (ValidarToken(token))
 
-            if (contexto.Recurso.ToList().Exists(recurso => recurso.IdRecurso == id))
+            {if (contexto.Recurso.ToList().Exists(recurso => recurso.IdRecurso == id))
             {
 
                 var recurso = contexto.Recurso.ToList().Find(recurso => recurso.IdRecurso == id);
@@ -67,24 +71,33 @@ namespace NovitNetCore.Controller
 
                 return BadRequest($"No hay recurso en la base de datos con el id: {id}");
             }
+            }
+            else
+                return Unauthorized();
         }
 
 
 
         [HttpPost]
         [Route("[action]")]
-        public ActionResult<List<RecursosViewModel>> NuevoRecurso([FromBody] RecursosViewModel nuevoRecurso)
+        public ActionResult<List<RecursosViewModel>> NuevoRecurso([FromHeader] string token, [FromBody] RecursosViewModel nuevoRecurso)
         {
+             if (ValidarToken(token))
+            {
             contexto.Recurso.Add(new Recurso { Nombre = nuevoRecurso.Nombre, Estado = nuevoRecurso.Estado });
             return Ok(contexto.Recurso);
+                }
+            else
+                 return Unauthorized();
         }
 
 
         [HttpPut]
         [Route("[action]/{id}")]
-        public ActionResult<List<RecursosViewModel>> ModificarRecurso([FromBody] RecursosViewModel unRecurso, int id)
+        public ActionResult<List<RecursosViewModel>> ModificarRecurso([FromHeader] string token, [FromBody] RecursosViewModel unRecurso, int id)
         {
-
+             if (ValidarToken(token))
+            { 
 
             if (contexto.Recurso.ToList().Exists(recurso => recurso.IdRecurso == id))
 
@@ -107,14 +120,18 @@ namespace NovitNetCore.Controller
 
                 return BadRequest($"No hay recurso en la base de datos con el id: {id}");
             }
+            }
+             else
+                 return Unauthorized();
 
         }
 
         [HttpDelete]
         [Route("[action]/{id}")]
-        public ActionResult<List<RecursosViewModel>> EliminarRecurso(int id)
+        public ActionResult<List<RecursosViewModel>> EliminarRecurso([FromHeader] string token, int id)
         {
-
+            if (ValidarToken(token))
+            { 
             var eliminarRecurso = contexto.Recurso.ToList().Find(recurso => recurso.IdRecurso == id);
 
 
@@ -129,6 +146,9 @@ namespace NovitNetCore.Controller
             {
                 return BadRequest($"No hay usuario en la base de datos con el id: {id}");
             }
+            }
+             else
+                 return Unauthorized();
         }
     }
 }

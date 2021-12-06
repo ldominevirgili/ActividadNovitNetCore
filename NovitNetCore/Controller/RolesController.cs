@@ -44,17 +44,21 @@ namespace NovitNetCore.Controller
             }
         }
         [HttpGet]
-        public ActionResult<List<RolesViewModel>> Get()
-        {
+        public ActionResult<List<RolesViewModel>> Get([FromHeader] string token)
+        {   
+            if (ValidarToken(token))
             return Ok(contexto.Rol);
+            else
+                return Unauthorized();
         }
 
         [HttpGet("{id}")]
 
 
-        public ActionResult<RolesViewModel> Get(int id)
+        public ActionResult<RolesViewModel> Get([FromHeader] string token, int id)
         {
-
+            if (ValidarToken(token))
+            { 
             if (contexto.Rol.ToList().Exists(rol => rol.IdRol == id))
             {
 
@@ -66,24 +70,33 @@ namespace NovitNetCore.Controller
 
                 return BadRequest($"No hay rol en la base de datos con el id: {id}");
             }
+            }
+            else
+                return Unauthorized();
         }
 
 
         [HttpPost]
         [Route("[action]")]
-        public ActionResult<List<RolesViewModel>> NuevoRol([FromBody] RolesViewModel nuevoRol)
-        {
+        public ActionResult<List<RolesViewModel>> NuevoRol([FromHeader] string token, [FromBody] RolesViewModel nuevoRol)
+        {   
+            if (ValidarToken(token))
+            { 
             contexto.Rol.Add(new Rol { Nombre = nuevoRol.Nombre, Estado = nuevoRol.Estado });
             contexto.SaveChanges();
             return Ok(contexto.Rol);
+                }
+            else
+                return Unauthorized();
         }
 
 
         [HttpPut]
         [Route("[action]/{id}")]
-        public ActionResult<List<RolesViewModel>> ModificarRol([FromBody] RolesViewModel unRol, int id)
+        public ActionResult<List<RolesViewModel>> ModificarRol([FromHeader] string token, [FromBody] RolesViewModel unRol, int id)
         {
-
+             if (ValidarToken(token))
+            { 
 
             if (contexto.Rol.ToList().Exists(rol => rol.IdRol == id))
 
@@ -106,14 +119,18 @@ namespace NovitNetCore.Controller
 
                 return BadRequest($"No hay usuario en la base de datos con el id: {id}");
             }
+             }
+            else
+                return Unauthorized();
 
         }
 
         [HttpDelete]
         [Route("[action]/{id}")]
-        public ActionResult<List<RolesViewModel>> Eliminar(int id)
+        public ActionResult<List<RolesViewModel>> Eliminar([FromHeader] string token, int id)
         {
-
+             if (ValidarToken(token))
+            { 
 
             var eliminarRol = contexto.Rol.ToList().Find(rol => rol.IdRol == id);
 
@@ -129,9 +146,10 @@ namespace NovitNetCore.Controller
             {
                 return BadRequest($"No hay usuario en la base de datos con el id: {id}.");
             }
+            }
+            else
+                return Unauthorized();
         }
-
-
     }
 }
 

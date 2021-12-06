@@ -44,16 +44,21 @@ namespace NovitNetCore.Controller
             }
         }
         [HttpGet]
-        public ActionResult<List<UsuariosViewModel>> Get()
+        public ActionResult<List<UsuariosViewModel>> Get([FromHeader] string token)
         {
+            if (ValidarToken(token))
             return Ok(contexto.Usuario);
+            else
+                return Unauthorized();
         }
 
         [HttpGet("{id}")]
 
 
-        public ActionResult<UsuariosViewModel> Get(int id)
+        public ActionResult<UsuariosViewModel> Get([FromHeader] string token, int id)
         {
+             if (ValidarToken(token))
+            { 
             if (contexto.Usuario.ToList().Exists(usuario => usuario.IdUsuario == id))
             {
                 var usuario = contexto.Usuario.ToList().Find(usuario => usuario.IdUsuario == id);
@@ -63,32 +68,40 @@ namespace NovitNetCore.Controller
             {
                 return BadRequest($"No hay usuario en la base de datos con el id: {id}");
             }
+            } else
+                return Unauthorized();
         }
 
 
 
         [HttpPost]
         [Route("[action]")]
-        public ActionResult<List<UsuariosViewModel>> NuevoUsuario([FromBody] UsuariosViewModel nuevoUsuario)
+        public ActionResult<List<UsuariosViewModel>> NuevoUsuario([FromHeader] string token, [FromBody] UsuariosViewModel nuevoUsuario)
         {
+             if (ValidarToken(token))
+            { 
             contexto.Usuario.Add(new Usuario { Nombre = nuevoUsuario.Nombre, Apellido = nuevoUsuario.Apellido, Username = nuevoUsuario.Username, Password = nuevoUsuario.Password, Email = nuevoUsuario.Email, Estado = nuevoUsuario.Estado });
 
 
             contexto.SaveChanges();
 
             return Ok(contexto.Usuario);
+                } else
+                return Unauthorized();
         }
 
 
         [HttpPut]
         [Route("[action]/{id}")]
-        public ActionResult<List<UsuariosViewModel>> ModificarUsuario([FromBody] UsuariosViewModel unUsuario, int id)
+        public ActionResult<List<UsuariosViewModel>> ModificarUsuario([FromHeader] string token, [FromBody] UsuariosViewModel unUsuario, int id)
         {
 
 
             if (contexto.Usuario.ToList().Exists(usuario => usuario.IdUsuario == id))
 
             {
+                 if (ValidarToken(token))
+            { 
 
 
                 var usuario = contexto.Usuario.ToList().Find(usuario => usuario.IdUsuario == id);
@@ -112,14 +125,17 @@ namespace NovitNetCore.Controller
 
                 return BadRequest($"No hay usuario en la base de datos con el id: {id}");
             }
+            } else
+                return Unauthorized();
 
         }
 
         [HttpDelete]
         [Route("[action]/{id}")]
-        public ActionResult<List<UsuariosViewModel>> EliminarUsuario(int id)
+        public ActionResult<List<UsuariosViewModel>> EliminarUsuario([FromHeader] string token, int id)
         {
-
+             if (ValidarToken(token))
+            { 
 
             var usuarioABorrar = contexto.Usuario.ToList().Find(usuario => usuario.IdUsuario == id);
 
@@ -136,7 +152,9 @@ namespace NovitNetCore.Controller
             {
                 return BadRequest($"No hay usuario en la base de datos con el id: {id}.");
             }
+            } else return Unauthorized();
         }
+              
 
     }
 
