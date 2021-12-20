@@ -82,7 +82,6 @@ namespace NovitNetCore.Controller
             { 
             contexto.Usuario.Add(new Usuario { Nombre = nuevoUsuario.Nombre, Apellido = nuevoUsuario.Apellido, Username = nuevoUsuario.Username, Password = nuevoUsuario.Password, Email = nuevoUsuario.Email, Estado = nuevoUsuario.Estado });
 
-
             contexto.SaveChanges();
 
             return Ok(contexto.Usuario);
@@ -132,7 +131,7 @@ namespace NovitNetCore.Controller
 
         [HttpDelete]
         [Route("[action]/{id}")]
-        public ActionResult<List<UsuariosViewModel>> EliminarUsuario([FromHeader] string token, int id)
+        public ActionResult EliminarUsuario([FromHeader] string token, int id)
         {
              if (ValidarToken(token))
             { 

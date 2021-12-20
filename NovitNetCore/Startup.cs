@@ -29,6 +29,16 @@ namespace NovitNetCore
             services.AddDbContext<ActividadContexto>(opcion => opcion.UseSqlServer(connectionString));
             services.AddScoped<DbContext, ActividadContexto>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CrossOriginResourceSharingPolicy",
+                builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                );
+            });
+
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,6 +55,8 @@ namespace NovitNetCore
             }
 
             app.UseRouting();
+
+            app.UseCors("CrossOriginResourceSharingPolicy");
 
             app.UseEndpoints(endpoints =>
             {

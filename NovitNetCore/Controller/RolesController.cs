@@ -127,7 +127,7 @@ namespace NovitNetCore.Controller
 
         [HttpDelete]
         [Route("[action]/{id}")]
-        public ActionResult<List<RolesViewModel>> Eliminar([FromHeader] string token, int id)
+        public ActionResult Eliminar([FromHeader] string token, int id)
         {
              if (ValidarToken(token))
             { 
@@ -140,6 +140,7 @@ namespace NovitNetCore.Controller
             {
                 var success = contexto.Rol.Remove(eliminarRol);
                 contexto.SaveChanges();
+
                 return Ok($"Fue eliminado de la base de datos el id: {id} ");
             }
             else

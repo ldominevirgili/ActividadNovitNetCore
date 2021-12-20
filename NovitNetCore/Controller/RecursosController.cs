@@ -85,8 +85,10 @@ namespace NovitNetCore.Controller
              if (ValidarToken(token))
             {
             contexto.Recurso.Add(new Recurso { Nombre = nuevoRecurso.Nombre, Estado = nuevoRecurso.Estado });
-            return Ok(contexto.Recurso);
-                }
+                contexto.SaveChanges();
+                return Ok(contexto.Recurso);
+               
+            }
             else
                  return Unauthorized();
         }
@@ -128,7 +130,7 @@ namespace NovitNetCore.Controller
 
         [HttpDelete]
         [Route("[action]/{id}")]
-        public ActionResult<List<RecursosViewModel>> EliminarRecurso([FromHeader] string token, int id)
+        public ActionResult EliminarRecurso([FromHeader] string token, int id)
         {
             if (ValidarToken(token))
             { 
